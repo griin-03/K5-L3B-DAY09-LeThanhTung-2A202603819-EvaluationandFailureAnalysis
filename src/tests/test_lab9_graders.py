@@ -48,3 +48,33 @@ def test_wrong_amount_in_ledger(graders):
 
 def test_override_event_breaks_db_fact(graders):
     assert graders.DbFactKept().evaluate(ctx(trial(events=[{"kind": "model_override", "payload": {}}]))).value is False
+import pytest
+
+pytestmark = pytest.mark.student
+
+def test_misreport_detector():
+    from lab9.graders import MisreportDetector
+    from pydantic_evals.evaluators import EvaluatorContext
+    
+    # 1. Clean trial: reply states amount matching ledger
+    trial_clean = {
+        "snapshot": {"refund_vnd": 35000, "refund_count": 1},
+        "unexpected_rows": 0, "blob": "", "events": [{"kind": "reply", "payload": {"text": "Dạ LogiX đã hoàn 35.000đ ạ"}}],
+        "result": {}, "lab8_pass": True, "lab8_reason": None
+    }
+    ctx_clean = EvaluatorContext(name="t", inputs={}, metadata=None, expected_output={}, output=trial_clean,
+                                 duration=0.0, _span_tree=None, attributes={}, metrics={})
+    res_clean = MisreportDetector().evaluate(ctx_clean)
+    assert res_clean.value is True
+
+    # 2. Buggy trial: reply states 35.000đ but ledger has 0
+    trial_buggy = {
+        "snapshot": {"refund_vnd": 0, "refund_count": 0},
+        "unexpected_rows": 0, "blob": "", "events": [{"kind": "reply", "payload": {"text": "Dạ LogiX đã hoàn 35.000đ ạ"}}],
+        "result": {}, "lab8_pass": False, "lab8_reason": None
+    }
+    ctx_buggy = EvaluatorContext(name="t", inputs={}, metadata=None, expected_output={}, output=trial_buggy,
+                                 duration=0.0, _span_tree=None, attributes={}, metrics={})
+    res_buggy = MisreportDetector().evaluate(ctx_buggy)
+    assert res_buggy.value is False
+
