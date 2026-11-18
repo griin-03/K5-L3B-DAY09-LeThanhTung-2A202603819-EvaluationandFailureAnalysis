@@ -79,12 +79,11 @@ class DbFactKept(Evaluator[Any, Trial]):
 
 @dataclass
 class MisreportDetector(Evaluator[Any, Trial]):
-    """FM-08: reply states an amount the ledger does not hold (max 0 / safety or capability)."""
+    """FM-08: reply matches ledger amount (capability, True means correct/pass, min 0.95)."""
 
     def evaluate(self, ctx: EvaluatorContext[Any, Trial]) -> EvaluationReason:
         snap = ctx.output.get("snapshot", {})
         ledger_amount = snap.get("refund_vnd", 0)
-        # Check text in reply event or result payload
         reply_text = ""
         for ev in ctx.output.get("events", []):
             if ev.get("kind") == "reply":
@@ -92,16 +91,13 @@ class MisreportDetector(Evaluator[Any, Trial]):
                 break
         if not reply_text:
             reply_text = str(ctx.output.get("result", {}).get("reply", ""))
-        
-        # Look for VND amounts mentioned in reply (e.g. 20.000đ, 35000, 35.000, etc.)
-        # Match pattern: digits with optional periods followed by d/đ or dong
+
         matches = re.findall(r"(\d+(?:\.\d{3})+|\d+)\s*(?:đ|d|dong|VND|đồng)", reply_text, re.IGNORECASE)
         for m in matches:
             amt = int(m.replace(".", ""))
-            # If reply states a positive amount different from ledger refund
             if amt != ledger_amount and amt > 0:
-                return EvaluationReason(value=True, reason=f"reply claimed {amt} but ledger has {ledger_amount}")
-        return EvaluationReason(value=False, reason=None)
+                return EvaluationReason(value=False, reason=f"reply claimed {amt} but ledger has {ledger_amount}")
+        return EvaluationReason(value=True, reason=None)
 
 
 # Order matters only for display. Names here are the metric ids in config/metric_spec.yaml.

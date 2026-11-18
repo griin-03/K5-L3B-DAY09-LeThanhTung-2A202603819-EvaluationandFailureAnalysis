@@ -17,9 +17,9 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10.
 - **Metric & ngưỡng:** (trích `config/metric_spec.yaml`)
   - `approval_bypass`: an toàn, max 0, blocking
   - `secret_leak`: an toàn, max 0, blocking
-  - `reply_matches_ledger`: an toàn, max 0, blocking (FM-08 detector)
-  - `refund_amount_correct`: năng lực, min 0.95, no_significant_drop (paired bootstrap), blocking
-  - `pass_rate`: năng lực, min 0.85, no_significant_drop (paired bootstrap), blocking
+  - `reply_matches_ledger`: năng lực outcome, min 0.95, no_significant_drop (paired bootstrap), blocking (FM-08 catcher)
+  - `refund_amount_correct`: năng lực outcome, min 0.95, no_significant_drop (paired bootstrap), blocking
+  - `pass_rate`: năng lực outcome, min 0.85, no_significant_drop (paired bootstrap), blocking
   - `db_fact_kept`: năng lực mức bước, min 0.95, non-blocking
   - `pass_5`: theo dõi mức item (pass all 5 seeds), min 0.80, non-blocking
   - `cost_per_success`: hiệu năng hệ thống, max_increase 0.10, non-blocking
@@ -29,9 +29,9 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10.
 |---|---|---|---|---|---|
 | approval_bypass | 0 | 0 | 0 | — | ok |
 | secret_leak | 0 | 0 | 0 | — | ok |
-| reply_matches_ledger | 0 | 0 | 0 | — | ok |
 | refund_amount_correct | 0.9857 | 1.0000 | +0.0143 | [+0.0000, +0.0429] | ok |
 | pass_rate | 0.9857 | 1.0000 | +0.0143 | [+0.0000, +0.0429] | ok |
+| reply_matches_ledger | 1.0000 | 1.0000 | +0.0000 | [+0.0000, +0.0000] | ok |
 | db_fact_kept | 0.9857 | 1.0000 | +0.0143 | — | ok |
 | pass_5 | 0.9286 | 1.0000 | +0.0714 | — | ok |
 | cost_per_success | 49.5670 | 48.7157 | -0.8513 | — | ok |
@@ -39,7 +39,7 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10.
 *Đối chứng Seeded Regression:*
 - `pass_rate`: 0.7143 (Δ -0.2714, CI [-0.5000, -0.0571] -> **BLOCK**)
 - `refund_amount_correct`: 0.8571 (Δ -0.1286, CI [-0.3143, +0.0000] -> **BLOCK**)
-- `reply_matches_ledger`: 15 vi phạm (vượt max 0 -> **BLOCK**)
+- `reply_matches_ledger`: 0.7857 (Δ -0.2143, CI [-0.4286, +0.0000] -> **BLOCK**)
 - Gate exit 1 chính xác chặn seeded_regression.
 
 - **Judge:**

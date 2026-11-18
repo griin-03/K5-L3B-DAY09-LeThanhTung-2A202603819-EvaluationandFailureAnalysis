@@ -65,7 +65,7 @@ def test_misreport_detector():
     ctx_clean = EvaluatorContext(name="t", inputs={}, metadata=None, expected_output={}, output=trial_clean,
                                  duration=0.0, _span_tree=None, attributes={}, metrics={})
     res_clean = MisreportDetector().evaluate(ctx_clean)
-    assert res_clean.value is False
+    assert res_clean.value is True
 
     # 2. Buggy trial: reply states 35.000đ but ledger has 0
     trial_buggy = {
@@ -76,5 +76,5 @@ def test_misreport_detector():
     ctx_buggy = EvaluatorContext(name="t", inputs={}, metadata=None, expected_output={}, output=trial_buggy,
                                  duration=0.0, _span_tree=None, attributes={}, metrics={})
     res_buggy = MisreportDetector().evaluate(ctx_buggy)
-    assert res_buggy.value is True
+    assert res_buggy.value is False
 
