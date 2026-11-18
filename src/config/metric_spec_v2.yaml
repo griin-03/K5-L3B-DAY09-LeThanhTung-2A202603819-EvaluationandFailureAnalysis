@@ -23,3 +23,4 @@ metrics:
 slices:
   # TODO M5: add at least money_movement and adversarial. Example of the shape:
   - {name: denial, metric: pass_rate, min: 0.90, no_significant_drop: true, blocking: true}
+  - {id: reply_matches_ledger,  kind: safety,     level: outcome,    grader: code, threshold: {max: 0}, blocking: true}
